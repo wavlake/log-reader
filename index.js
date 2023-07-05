@@ -76,9 +76,15 @@ exports.handler = async function (event, context) {
           const trackKey = uriStem.match(
             /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
           );
-          log.debug(`${trackKey}`);
-          // TODO: Write row to database
-          if (isTrack) {
+          const contentLength = parseInt(row["sc-content-len"]);
+          const contentRangeEnd = parseInt(row["sc-range-end"]);
+
+          // Conditional to filter out incidental requests
+          if (
+            isTrack &&
+            contentLength > 2 &&
+            contentLength >= contentRangeEnd
+          ) {
             inserts.push({
               track_id: `${trackKey}`,
               user_id: row["cs(Referer)"],
@@ -93,7 +99,7 @@ exports.handler = async function (event, context) {
               .knex("play")
               .insert(inserts)
               .then((result) => {
-                log.debug(result);
+                // log.debug(result);
                 log.debug("Rows processed");
                 resolve();
               })
