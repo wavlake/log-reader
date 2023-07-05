@@ -88,18 +88,23 @@ exports.handler = async function (event, context) {
           }
         })
         .on("end", () => {
-          return db
-            .knex("play")
-            .insert(inserts)
-            .then((result) => {
-              log.debug(result);
-              log.debug("Rows processed");
-              resolve();
-            })
-            .catch((err) => {
-              log.debug(err);
-              reject(err);
-            });
+          if (inserts.length > 0) {
+            return db
+              .knex("play")
+              .insert(inserts)
+              .then((result) => {
+                log.debug(result);
+                log.debug("Rows processed");
+                resolve();
+              })
+              .catch((err) => {
+                log.debug(err);
+                reject(err);
+              });
+          } else {
+            log.debug("No rows to process");
+            resolve();
+          }
         });
     });
   });
