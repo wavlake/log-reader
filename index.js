@@ -78,10 +78,13 @@ exports.handler = async function (event, context) {
           );
           const contentLength = parseInt(row["sc-content-len"]);
           const contentRangeEnd = parseInt(row["sc-range-end"]);
+          const userAgent = row["cs(User-Agent)"];
+          const xEdgeResultType = row["x-edge-result-type"];
 
           // Conditional to filter out incidental requests
           if (
             isTrack &&
+            xEdgeResultType !== "Error" &&
             contentLength > 2 &&
             contentLength >= contentRangeEnd
           ) {
@@ -89,6 +92,7 @@ exports.handler = async function (event, context) {
               track_id: `${trackKey}`,
               user_id: row["cs(Referer)"],
               created_at: `${row["date"]} ${row["time"]}`,
+              user_agent: userAgent,
               complete: true,
             });
           }
