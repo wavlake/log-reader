@@ -72,7 +72,7 @@ exports.handler = async function (event, context) {
           // log.debug(row);
           // log.debug(row["cs-uri-stem"]);
           const uriStem = row["cs-uri-stem"];
-          const isTrack = row["cs-uri-stem"].match(/track/);
+          const isTrack = row["cs-uri-stem"].match(/track|episode/);
           const trackKey = uriStem.match(
             /[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}/
           );
